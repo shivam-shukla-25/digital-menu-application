@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  fullName  String
+  country   String
+  verified  Boolean    @default(false)
+  verificationCode String?
+  verificationCodeExpiry DateTime?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  restaurants Restaurant[]
+}
+
+model Restaurant {
+  id        String     @id @default(cuid())
+  name      String
+  location  String
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  categories Category[]
+  dishes     Dish[]
+
+  @@index([userId])
+}
+
+model Category {
+  id           String     @id @default(cuid())
+  name         String
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  dishes      DishCategory[]
+
+  @@index([restaurantId])
+}
+
+model Dish {
+  id            String     @id @default(cuid())
+  name          String
+  description   String     @db.Text
+  image         String
+  price         Float
+  spiceLevel    Int?       // 0-5 scale
+  restaurantId  String
+  restaurant    Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  categories    DishCategory[]
+
+  @@index([restaurantId])
+}
+
+model DishCategory {
+  id         String   @id @default(cuid())
+  dishId     String
+  dish       Dish     @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([dishId, categoryId])
+  @@index([dishId])
+  @@index([categoryId])
+}
