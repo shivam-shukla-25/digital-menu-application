@@ -4,8 +4,8 @@ A comprehensive web application for restaurants to manage their menus digitally 
 
 ## Live Deployment
 
-- **Vercel URL**: [Deploy to your Vercel account]
-- **Repository**: [Push to your GitHub repository]
+- **Vercel URL**: https://digital-menu-application.vercel.app/
+- **Repository**: https://github.com/shivam-shukla-25/digital-menu-application
 
 ## Project Overview
 
@@ -58,7 +58,7 @@ Customers can:
 - **Hosting**: Vercel
 
 ### Dependencies
-\`\`\`
+```
 next@^16.0.0
 react@^19.0.0
 prisma@^7.0.0
@@ -67,7 +67,7 @@ resend@^6.5.0
 shadcn/ui (shadcn CLI installed)
 tailwindcss@^4.0.0
 typescript@^5.0.0
-\`\`\`
+```
 
 ## AI Tools & Models Used
 
@@ -100,7 +100,7 @@ typescript@^5.0.0
 7. **Email Implementation**: Initial placeholder - Replaced with full Resend integration with API key configuration
 
 ### Email Flow
-\`\`\`
+```
 User Registration/Login
     ↓
 Generate 6-digit verification code + 10-minute expiry
@@ -114,7 +114,7 @@ User receives email in inbox
 User enters code in app to verify
     ↓
 Account verified → Session created → Access granted
-\`\`\`
+```
 
 ### Features
 - Beautiful HTML email templates with branding
@@ -172,25 +172,25 @@ Account verified → Session created → Access granted
 - **Limitation**: Database bloat for many high-res images
 - **Solution Approach**: Integrate Vercel Blob or AWS S3 for production
 - **Better Implementation**:
-\`\`\`javascript
+```javascript
 // Would replace Base64 approach
 const blob = await fetch(formData).then(r => r.blob());
 const url = await put(`menu-images/${dishId}`, blob);
-\`\`\`
+```
 
 ### Rate Limiting & Abuse Prevention
 - **Issue**: No rate limiting on API endpoints
 - **Risk**: Potential abuse of verification code endpoint
 - **Solution Approach**: Implement with next-rate-limit or Upstash Redis
 - **Production Approach**:
-\`\`\`typescript
+```typescript
 // Add to API routes
 import { Ratelimit } from "@upstash/ratelimit";
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
   limiter: Ratelimit.slidingWindow(5, "10 s"),
 });
-\`\`\`
+```
 
 ### Multi-Language Support
 - **Issue**: Menu descriptions are English-only
@@ -238,7 +238,7 @@ const ratelimit = new Ratelimit({
 - Resend account (for email service)
 
 ### Setup Steps
-\`\`\`bash
+```bash
 # 1. Clone repository
 git clone [repository-url]
 cd digimenu
@@ -261,7 +261,7 @@ npm run dev
 
 # 6. Access application
 # Navigate to http://localhost:3000
-\`\`\`
+```
 
 ### Email Verification Testing
 - Use your verified email in Resend dashboard
@@ -278,7 +278,7 @@ For demo purposes:
 
 ## Project Structure
 
-\`\`\`
+```
 digimenu/
 ├── app/
 │   ├── api/              # API routes for backend logic
@@ -299,7 +299,7 @@ digimenu/
 │   └── schema.prisma     # Database schema
 ├── public/               # Static assets
 └── README.md             # This file
-\`\`\`
+```
 
 ## Key Features Implemented
 
@@ -328,74 +328,31 @@ digimenu/
 2. Connect repository to Vercel project
 3. Add environment variables in Vercel dashboard:
    - `DATABASE_URL`: Your Neon PostgreSQL connection string
-   - `RESEND_API_KEY`: Your Resend API key
-   - `NEXT_PUBLIC_APP_URL`: Your Vercel deployment URL
+   - `AUTH_EMAIL`: GMAIL EMAIL
+   - `AUTH_PASSWORD`: GMAIL PASSWORD
 4. Deploy - Vercel will automatically run migrations
 
-### Email Service in Production
-- Ensure `RESEND_API_KEY` is added to Vercel environment variables
-- Verify your sender email domain in Resend dashboard
-- Update `FROM_EMAIL` in `lib/email.ts` for production domain
-- Monitor email delivery in Resend dashboard
-
-### Post-Deployment
-- Test email verification with real email
-- Monitor Vercel Analytics dashboard
-- Check Resend dashboard for email metrics
-- Verify QR code generation working with new domain
-
-## Future Enhancements
-
-- [ ] Image storage with Vercel Blob or S3
-- [ ] Admin analytics dashboard
-- [ ] Multi-language support (i18n)
-- [ ] Real-time menu updates via WebSocket
-- [ ] Mobile-specific optimizations
-- [ ] Dark mode preference persistence
-- [ ] Dish search and filtering
-- [ ] Restaurant reservation integration
-- [ ] Payment integration for online ordering
-- [ ] SMS verification as alternative to email
-
-## Troubleshooting
-
-### Email Not Received
-\`\`\`
-→ Check spam/promotions folder
-→ Verify sender email in Resend dashboard
-→ Check Resend logs at https://resend.com/emails
-→ Ensure RESEND_API_KEY is set correctly
-→ Check console logs for email service errors
-\`\`\`
-
 ### Database Connection Issues
-\`\`\`
+```
 Error: connect ECONNREFUSED
 → Verify Neon connection string in .env.local
 → Check network access is enabled in Neon dashboard
-\`\`\`
+```
 
 ### Prisma Migration Issues
-\`\`\`
+```
 Error: Engine failed to start
 → Run: npx prisma generate
 → Run: npx prisma migrate deploy
-\`\`\`
-
-### QR Code Not Displaying
-\`\`\`
-→ Check NEXT_PUBLIC_APP_URL environment variable
-→ Verify QR Server API is accessible
-→ Test with direct URL to /api/menu/[id]
-\`\`\`
+```
 
 ### API Key Configuration
-\`\`\`
+```
 Error: RESEND_API_KEY is undefined
 → Create .env.local file in project root
-→ Copy RESEND_API_KEY from https://resend.com/api-keys
+→ Add `DATABASE_URL`, `AUTH_EMAIL` and `AUTH_PASSWORD` in .env
 → Restart development server after adding .env.local
-\`\`\`
+```
 
 ## Code Quality & Standards
 
